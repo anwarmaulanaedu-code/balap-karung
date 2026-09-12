@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Balap Karung 2D - HUT RI 81</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="game-wrapper">
+        <!-- Top Header Bar -->
+        <div class="flex justify-between items-center bg-[#1f2335] p-4 rounded-xl border border-gray-700 shadow-lg">
+            <div class="flex items-center gap-4">
+                <span class="bg-red-600 text-white font-bold py-1 px-3 rounded-md text-sm tracking-widest shadow-inner">HUT RI KE-81</span>
+                <h2 class="text-2xl font-black uppercase tracking-widest text-gray-100">BALAP KARUNG MERDEKA</h2>
+            </div>
+            <div class="flex gap-4">
+                <div id="gp1-status" class="flex items-center gap-2 text-sm font-semibold text-gray-400 border border-gray-700 bg-black/30 rounded-lg px-4 py-2"><i class="fa-solid fa-gamepad"></i> P1: Off</div>
+                <div id="gp2-status" class="flex items-center gap-2 text-sm font-semibold text-gray-400 border border-gray-700 bg-black/30 rounded-lg px-4 py-2"><i class="fa-solid fa-gamepad"></i> P2: Off</div>
+                <button id="btn-sound" class="flex items-center gap-2 text-sm font-bold text-white border border-gray-600 hover:bg-gray-700 rounded-lg px-4 py-2 transition-colors"><i id="sound-icon" class="fa-solid fa-volume-high"></i> Suara</button>
+            </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="bg-[#1f2335] p-3 rounded-xl border border-gray-700 shadow-lg flex items-center justify-between">
+            <div class="font-black text-red-400 w-24 text-center tracking-wider flex items-center gap-2"><i class="fa-solid fa-flag text-xs"></i> START</div>
+            <i class="fa-solid fa-flag-checkered text-yellow-500 ml-2"></i>
+            <div class="flex-1 mx-4 relative h-6 bg-gray-900 rounded-full overflow-hidden border-2 border-gray-800 shadow-inner">
+                <div id="p1-progress" class="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-red-700 to-red-500 w-[0%] transition-all duration-300 rounded-full z-10"></div>
+                <div id="p2-progress" class="absolute left-0 top-0 bottom-0 bg-gradient-to-r from-gray-400 to-white w-[0%] transition-all duration-300 rounded-full opacity-60"></div>
+                <div class="absolute inset-0 flex items-center justify-center text-xs font-bold text-gray-500 z-20 mix-blend-difference">JARAK TEMPUH</div>
+            </div>
+            <i class="fa-solid fa-flag-checkered text-yellow-500 mr-2"></i>
+            <div class="font-black text-yellow-300 w-24 text-center tracking-wider flex items-center gap-2 justify-end">FINISH <i class="fa-solid fa-flag-checkered text-xs"></i></div>
+        </div>
+
+        <div id="game-container">
+            <!-- Main Game Canvas -->
+            <canvas id="gameCanvas" width="1280" height="720"></canvas>
+
+        <!-- Main Menu UI -->
+        <div id="main-menu" class="absolute inset-0 z-10 text-white">
+            <img class="menu-runner menu-runner-left" src="asset/karakter1/lompat.png" alt="Pemain balap karung">
+            <img class="menu-runner menu-runner-right" src="asset/karakter1/lompat.png" alt="Pemain balap karung">
+
+            <section class="menu-hero">
+                <p class="menu-kicker"><i class="fa-solid fa-flag-checkered"></i> PERLOMBAAN KEMERDEKAAN</p>
+                <h1>BALAP KARUNG <span>MERDEKA</span></h1>
+                <p class="menu-subtitle">Spesial HUT RI ke-81</p>
+
+                <div class="mode-options">
+                    <button id="btn-pvc" class="mode-card mode-card-red">
+                        <i class="fa-solid fa-user"></i>
+                        <strong>1 PLAYER</strong>
+                        <span>(vs Komputer)</span>
+                        <em>Mulai Game <i class="fa-solid fa-arrow-right"></i></em>
+                    </button>
+                    <button id="btn-pvp" class="mode-card mode-card-white">
+                        <i class="fa-solid fa-user-group"></i>
+                        <strong>2 PLAYER</strong>
+                        <span>(Lokal)</span>
+                        <em>Mulai Game <i class="fa-solid fa-arrow-right"></i></em>
+                    </button>
+                </div>
+            </section>
+
+            <section class="menu-info">
+                <article class="rules-panel">
+                    <h2><i class="fa-solid fa-clipboard-list"></i> Aturan Permainan</h2>
+                    <ol>
+                        <li>Dapat dimainkan 2 orang atau melawan komputer.</li>
+                        <li>Tekan tombol ketika penunjuk berada di area hijau.</li>
+                        <li>Tekanan yang tepat membuat lompatan lebih jauh.</li>
+                        <li>Lompat melewati palang bambu di lintasan.</li>
+                        <li>Pemain pertama melewati garis finis menang.</li>
+                    </ol>
+                </article>
+                <article class="controls-panel">
+                    <h2><i class="fa-solid fa-gamepad"></i> Kontrol Permainan</h2>
+                    <div class="control-row control-p1"><b><i class="fa-solid fa-user"></i> P1 Merah</b><span>Lompat <kbd>SPASI</kbd> atau tombol <kbd>A</kbd></span></div>
+                    <div class="control-row control-p2"><b><i class="fa-solid fa-user"></i> P2 Putih</b><span>Lompat <kbd>ENTER</kbd> atau tombol <kbd>A</kbd></span></div>
+                </article>
+            </section>
+        </div>
+
+        <!-- Game Over UI -->
+        <div id="game-over" class="hidden absolute inset-0 z-10 text-white">
+            <section class="victory-panel">
+                <div class="victory-stars">★ ★ ★</div>
+                <i class="fa-solid fa-trophy victory-trophy"></i>
+                <p class="victory-kicker">GARIS FINIS TERLEWATI</p>
+                <h1 id="winner-text">Player Menang!</h1>
+                <p class="victory-message">Selamat! Kamu menjadi yang tercepat di lintasan.</p>
+                <button id="btn-restart" class="victory-restart">
+                    <i class="fa-solid fa-rotate-right"></i> Main Lagi
+                </button>
+            </section>
+        </div>
+    </div> <!-- Close game-container -->
+    </div> <!-- Close game-wrapper -->
+
+    <!-- Scripts -->
+    <script src="js/audio.js"></script>
+    <script src="js/jumpbar.js"></script>
+    <script src="js/obstacle.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/game.js"></script>
+</body>
+</html>
